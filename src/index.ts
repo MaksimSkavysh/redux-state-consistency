@@ -1,10 +1,11 @@
 import * as t from 'runtypes'
 
-type checkFn = (state: object, action: object) => void
+type checkFn = (state: any, action: object) => void
 
-const checkFunctions = []
+const checkFunctions: checkFn[] = []
 
 export const checkStoreConsistency = (checkers: checkFn[]) => {
+    checkers = t.Array(t.Function).check(checkers)
     checkFunctions.push(...checkers)
 }
 
