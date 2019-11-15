@@ -1,0 +1,40 @@
+{
+  "name": "redux-state-consistency",
+  "version": "1.0.0",
+  "description": "Redux state consistency checker",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaksimSkavysh/redux-state-consistency.git"
+  },
+  "keywords": [
+    "redux",
+    "state",
+    "store",
+    "consistency",
+    "validation",
+    "check",
+    "varify"
+  ],
+  "author": "MaksimSkavysh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaksimSkavysh/redux-state-consistency/issues"
+  },
+  "homepage": "https://github.com/MaksimSkavysh/redux-state-consistency#readme",
+  "dependencies": {
+    "redux": "^4.0.4",
+    "runtypes": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.19",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.7.2"
+  }
+}
