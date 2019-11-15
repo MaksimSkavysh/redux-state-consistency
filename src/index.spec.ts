@@ -69,13 +69,13 @@ test('Test initial store value', () => {
 test('Test positive store validation scenarios', () => {
     const mockedValidator = jest.fn((state, action) => true)
     const validatorId = registerStoreConsistencyValidator(mockedValidator)
-    console.log('validatorId', validatorId)
     const action1 = { type: ADD_TODO, ...item1 }
     const action2 = { type: ADD_TODO, ...item2 }
     dispatch(action1)
     const state1 = getState()
     dispatch(action2)
     const state2 = getState()
+
     expect(mockedValidator.mock.calls.length).toBe(2);
     expect(mockedValidator.mock.calls[0][0]).toBe(state1)
     expect(mockedValidator.mock.calls[1][0]).toBe(state2)
