@@ -33,7 +33,7 @@ const checkStateConsistencyCreator = (params : { level: string }): validatorFn =
         .map((f) => f(state, action))
         .filter(error => !!error && typeof error === "string")
     if (errors.length > 0) {
-        const message = `State consistency error for action ${action.type}`
+        const message = `State consistency error, last action: ${action.type}`
         if (level === LEVELS.throw) {
             console.log('throw')
             throw new stateConsistencyError({ message, errors })
