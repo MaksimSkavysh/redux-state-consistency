@@ -27,8 +27,8 @@ export const deleteStoreConsistencyValidator = (validatorId : string | number) =
     return checkFunctions.delete(validatorId)
 }
 
-const checkStateConsistencyCreator = ({ level = LEVELS.error } = {}): validatorFn => (state, action) => {
-    levelsType.check(level)
+const checkStateConsistencyCreator = (params : { level: string }): validatorFn => (state, action) => {
+    const { level } = params
     const errors = Array.from(checkFunctions.values())
         .map((f) => f(state, action))
         .filter(error => !!error && typeof error === "string")
@@ -44,6 +44,8 @@ const checkStateConsistencyCreator = ({ level = LEVELS.error } = {}): validatorF
 }
 
 export const stateConsistencyMiddleware = ({ debounce = 0, level = LEVELS.error } = {}) => {
+    level = levelsType.check(level)
+    debounce =  t.Number.withConstraint(n => n >= 0 || "debounce should be not negative integer").check(debounce)
     const checkStateConsistency = checkStateConsistencyCreator({ level })
     return ({getState}) => next => action => {
         const result = next(action)
