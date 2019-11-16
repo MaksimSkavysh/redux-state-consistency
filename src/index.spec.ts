@@ -4,7 +4,6 @@ import {
     deleteStoreConsistencyValidator,
 } from './index'
 import { createStore, combineReducers, applyMiddleware } from "redux"
-import get = Reflect.get
 
 const ADD_TODO = 'ADD_TODO'
 const FAKE_ACTION = 'FAKE_ACTION'
@@ -44,7 +43,7 @@ const order = (state = [], action) => {
 const store = createStore(
     combineReducers({ byId, order }),
     {},
-    applyMiddleware(stateConsistencyMiddleware())
+    applyMiddleware(stateConsistencyMiddleware({ level: 'throw' }))
 )
 
 const idsConsistency = (state, action) => {
@@ -76,7 +75,7 @@ test('Test positive store validation scenarios', () => {
     dispatch(action2)
     const state2 = getState()
 
-    expect(mockedValidator.mock.calls.length).toBe(2);
+    expect(mockedValidator.mock.calls.length).toBe(2)
     expect(mockedValidator.mock.calls[0][0]).toBe(state1)
     expect(mockedValidator.mock.calls[1][0]).toBe(state2)
 
@@ -86,9 +85,9 @@ test('Test positive store validation scenarios', () => {
     })
 
     dispatch({ type: FAKE_ACTION })
-    expect(mockedValidator.mock.calls.length).toBe(3);
+    expect(mockedValidator.mock.calls.length).toBe(3)
     deleteStoreConsistencyValidator(validatorId)
     dispatch({ type: FAKE_ACTION })
-    expect(mockedValidator.mock.calls.length).toBe(3); // should not be changed
+    expect(mockedValidator.mock.calls.length).toBe(3) // should not be changed
 })
 

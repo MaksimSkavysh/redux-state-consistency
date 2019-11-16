@@ -1,13 +1,17 @@
 import * as t from 'runtypes'
 
+import {stateConsistencyError} from './errors'
+import {logErrors} from "./utils"
+
 const LEVELS = { error: 'error', throw: 'throw' }
 
-type validatorFn = (state: any, action: object) => void
+type actionType = { type: string, [key: string] : any }
+type validatorFn = (state: any, action: actionType) => void
 const levelsType = t.Union(t.Literal(LEVELS.error), t.Literal(LEVELS.throw))
 
 const checkFunctions = new Map()
-let lastId = (new Date()).valueOf()
 
+let lastId = (new Date()).valueOf()
 export const registerStoreConsistencyValidator = (validator: validatorFn) => {
     validator = t.Function.check(validator)
     lastId = lastId + 1
@@ -25,7 +29,18 @@ export const deleteStoreConsistencyValidator = (validatorId : string | number) =
 
 const checkStateConsistencyCreator = ({ level = LEVELS.error } = {}): validatorFn => (state, action) => {
     levelsType.check(level)
-    const errors = Array.from(checkFunctions.values()).map((f) => f(state, action))
+    const errors = Array.from(checkFunctions.values())
+        .map((f) => f(state, action))
+        .filter(error => !!error && typeof error === "string")
+    if (errors.length > 0) {
+        const message = `State consistency error for action ${action.type}`
+        if (level === LEVELS.throw) {
+            console.log('throw')
+            throw new stateConsistencyError({ message, errors })
+        } else {
+            logErrors(message, errors)
+        }
+    }
 }
 
 export const stateConsistencyMiddleware = ({ debounce = 0, level = LEVELS.error } = {}) => {
