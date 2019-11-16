@@ -48,6 +48,10 @@ export const stateConsistencyMiddleware = ({ debounce = 0, level = LEVELS.error 
     debounce =  t.Number.withConstraint(n => n >= 0 || "debounce should be not negative integer").check(debounce)
     const checkStateConsistency = checkStateConsistencyCreator({ level })
     return ({getState}) => next => action => {
+        if (t.Function.guard(action)) {
+            console.error("Action is function, please place stateConsistencyMiddleware after thunk middleware")
+            return
+        }
         const result = next(action)
         const state = getState()
         checkStateConsistency(state, action)
