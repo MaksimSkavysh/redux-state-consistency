@@ -1,1 +1,1 @@
-export { stateConsistencyMiddleware, registerStoreConsistencyValidator, registerSomeStoreConsistencyValidators, deleteStoreConsistencyValidator, deleteSomeStoreConsistencyValidators, } from './main';
+export { stateConsistencyMiddleware, registerStoreConsistencyValidator, deleteStoreConsistencyValidator, } from './main';

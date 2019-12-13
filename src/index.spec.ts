@@ -43,7 +43,7 @@ const order = (state = [], action: AnyAction) => {
 const store = createStore(
     combineReducers({ byId, order }),
     {},
-    applyMiddleware(stateConsistencyMiddleware({ level: 'throw' }))
+    applyMiddleware(stateConsistencyMiddleware('throw'))
 )
 
 const idsConsistency = (state: any, action: AnyAction) => {

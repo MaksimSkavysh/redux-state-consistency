@@ -7,3 +7,4 @@ export declare class stateConsistencyError extends Error {
     });
     toString(): string;
 }
+export declare const logErrors: (message: string, errors: any[]) => void;

@@ -1,65 +1,47 @@
-import * as t from 'runtypes'
+import * as T from 'runtypes'
 
-import {stateConsistencyError} from './errors'
+import { logErrors, stateConsistencyError } from './errors'
 import { AnyAction } from "redux"
 
 const LEVELS = { error: 'error', throw: 'throw' }
 
-type actionType = { type: string, [key: string] : any }
-type validatorFn = (state: any, action: actionType) => void
-const levelsType = t.Union(t.Literal(LEVELS.error), t.Literal(LEVELS.throw))
+type validatorFn = (state: any, action: AnyAction) => void
+const levelsType = T.Union(T.Literal(LEVELS.error), T.Literal(LEVELS.throw))
 
-const logErrors = (message: string, errors: any[]) => {
-    console.groupCollapsed && console.groupCollapsed(message)
-    errors.forEach(error => console.error(error))
-    console.groupEnd && console.groupEnd()
-}
-
-const checkFunctions = new Map()
+const validatorFunctions = new Map()
 
 let lastId = (new Date()).valueOf()
 export const registerStoreConsistencyValidator = (validator: validatorFn) => {
-    validator = t.Function.check(validator)
+    validator = T.Function.check(validator)
     lastId = lastId + 1
-    checkFunctions.set(lastId, validator)
+    validatorFunctions.set(lastId, validator)
     return lastId
 }
 
 export const deleteStoreConsistencyValidator = (validatorId : number) => {
-    return checkFunctions.delete(validatorId)
+    return validatorFunctions.delete(validatorId)
 }
-
-export const registerSomeStoreConsistencyValidators = (validators: validatorFn[]) => {
-    return validators.map(registerStoreConsistencyValidator)
-}
-
-export const deleteSomeStoreConsistencyValidators = (validators: number[]) => {
-    return validators.map(deleteStoreConsistencyValidator)
-}
-
 
 const checkStateConsistencyCreator = (params : { level: string }): validatorFn => (state, action) => {
     const { level } = params
-    const errors = Array.from(checkFunctions.values())
-        .map((f) => f(state, action))
+    const errors = Array.from(validatorFunctions.values())
+        .map((validator) => validator(state, action))
         .filter(error => error !== true || (!!error && typeof error === "string"))
     if (errors.length > 0) {
         const message = `State consistency error, last action: ${action.type}`
+        logErrors(message, errors)
         if (level === LEVELS.throw) {
-            console.log('throw')
             throw new stateConsistencyError({ message, errors })
-        } else {
-            logErrors(message, errors)
         }
     }
 }
 
-export const stateConsistencyMiddleware = ({ debounce = 0, level = LEVELS.error } = {}) => {
+export const stateConsistencyMiddleware = (level = LEVELS.error) => {
     level = levelsType.check(level)
-    debounce =  t.Number.withConstraint(n => n >= 0 || "debounce should be not negative integer").check(debounce)
+    // debounce =  T.Number.withConstraint(n => n >= 0 || "debounce should be not negative integer").check(debounce)
     const checkStateConsistency = checkStateConsistencyCreator({ level })
     return ({ getState }: any) => (next: any) => (action: AnyAction) => {
-        if (t.Function.guard(action)) {
+        if (T.Function.guard(action)) {
             console.error("Action is function, please place stateConsistencyMiddleware after thunk middleware")
             return
         }
