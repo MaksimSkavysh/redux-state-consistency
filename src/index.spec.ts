@@ -3,13 +3,13 @@ import {
     registerStoreConsistencyValidator,
     deleteStoreConsistencyValidator,
 } from './index'
-import { createStore, combineReducers, applyMiddleware } from "redux"
+import { createStore, combineReducers, applyMiddleware, AnyAction } from "redux"
 
 const ADD_TODO = 'ADD_TODO'
 const FAKE_ACTION = 'FAKE_ACTION'
 const DELETE_TODO_BROKEN = 'DELETE_TODO_BROKEN'
 
-const byId = (state = {}, action) => {
+const byId = (state = {}, action: AnyAction) => {
     const { type, ...rest } = action
     switch (type) {
         case ADD_TODO:
@@ -26,7 +26,7 @@ const byId = (state = {}, action) => {
     }
 }
 
-const order = (state = [], action) => {
+const order = (state = [], action: AnyAction) => {
     const { type, id } = action
     switch (type) {
         case ADD_TODO:
@@ -46,9 +46,9 @@ const store = createStore(
     applyMiddleware(stateConsistencyMiddleware({ level: 'throw' }))
 )
 
-const idsConsistency = (state, action) => {
+const idsConsistency = (state: any, action: AnyAction) => {
     const { byId, order } = state
-    return order.every(id => !!byId[id])
+    return order.every((id: string) => !!byId[id])
         || `Broken state consistency for ${action.type}`
 }
 

@@ -1,3 +1,4 @@
+import { AnyAction } from "redux";
 declare type actionType = {
     type: string;
     [key: string]: any;
@@ -8,9 +9,7 @@ export declare const deleteStoreConsistencyValidator: (validatorId: number) => b
 export declare const registerSomeStoreConsistencyValidators: (validators: validatorFn[]) => number[];
 export declare const deleteSomeStoreConsistencyValidators: (validators: number[]) => boolean[];
 export declare const stateConsistencyMiddleware: ({ debounce, level }?: {
-    debounce?: number;
-    level?: string;
-}) => ({ getState }: {
-    getState: any;
-}) => (next: any) => (action: any) => any;
+    debounce?: number | undefined;
+    level?: string | undefined;
+}) => ({ getState }: any) => (next: any) => (action: AnyAction) => any;
 export {};

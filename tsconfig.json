@@ -1,5 +1,9 @@
 {
   "compilerOptions":  {
+    "newLine": "LF",
+    "inlineSourceMap": true,
+    "alwaysStrict": true,
+    "strict": true,
     "outDir":  "./lib",
     "lib":  ["es2015", "dom"],
     "module":  "commonjs",
