@@ -1,1 +1,1 @@
-# redux-state-consistency
+# redux-state-consistency (X)
